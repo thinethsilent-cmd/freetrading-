@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX SCRIPTS — AI Crypto Signals | Institutional Grade</title>
+    <meta name="description"
+        content="AuraX delivers real-time AI-powered cryptocurrency trading signals for scalping and swing trading, powered by advanced machine learning models.">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- TradingView Widget -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ======== PARTICLES BACKGROUND ======== -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- ======== LOGIN OVERLAY ======== -->
+    <div id="login-overlay" class="auth-overlay active">
+        <div class="auth-card glass-panel">
+            <div class="auth-logo">
+                <div class="logo-icon-wrap">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h1 class="logo-text">APE<span class="gradient-text">X</span></h1>
+                <span class="version-tag">PRO v4.2</span>
+            </div>
+            <p class="auth-subtitle">Institutional-Grade AI Signal Intelligence</p>
+
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Sign In</button>
+                <button class="auth-tab" data-tab="register">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active-form" data-form="login">
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="login-email" placeholder="Email Address" required autocomplete="email">
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="login-password" placeholder="Password" required
+                        autocomplete="current-password">
+                    <button type="button" class="toggle-pw" onclick="togglePassword('login-password', this)"><i
+                            class="fa-solid fa-eye"></i></button>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-label"><input type="checkbox" checked> Remember me</label>
+                    <a href="#" class="link-text">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn-primary glow-effect" id="login-btn">
+                    <span>Initialize Core</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form" data-form="register" style="display:none">
+                <div class="input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="reg-name" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="reg-email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="reg-password" placeholder="Create Password" required>
+                    <button type="button" class="toggle-pw" onclick="togglePassword('reg-password', this)"><i
+                            class="fa-solid fa-eye"></i></button>
+                </div>
+                <button type="submit" class="btn-primary glow-effect" id="register-btn">
+                    <span>Create Account</span> <i class="fa-solid fa-rocket"></i>
+                </button>
+            </form>
+
+            <div class="auth-divider"><span>Trusted by 10,000+ traders</span></div>
+            <div class="trust-badges">
+                <span><i class="fa-solid fa-shield-halved"></i> Bank-Grade Encryption</span>
+                <span><i class="fa-solid fa-bolt"></i> Real-Time Signals</span>
+                <span><i class="fa-solid fa-brain"></i> AI-Powered</span>
+            </div>
+        </div>
+        <!-- Blobs -->
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- ======== TOAST NOTIFICATIONS ======== -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- ======== MAIN DASHBOARD ======== -->
+    <div id="app-dashboard" class="dashboard hidden">
+
+        <!-- Sidebar -->
+        <nav class="sidebar glass-panel" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon-wrap sm">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <span class="logo-text">APE<span class="gradient-text">X</span></span>
+            </div>
+
+            <ul class="nav-links" id="nav-links">
+                <li class="nav-item active" data-page="dashboard">
+                    <a href="#"><i class="fa-solid fa-border-all"></i><span>Dashboard</span></a>
+                </li>
+                <li class="nav-item" data-page="signals">
+                    <a href="#"><i class="fa-solid fa-bolt"></i><span>Live Signals</span></a>
+                    <span class="nav-badge">LIVE</span>
+                </li>
+                <li class="nav-item" data-page="portfolio">
+                    <a href="#"><i class="fa-solid fa-chart-pie"></i><span>Portfolio</span></a>
+                </li>
+                <li class="nav-item" data-page="ai-models">
+                    <a href="#"><i class="fa-solid fa-robot"></i><span>AI Models</span></a>
+                </li>
+                <li class="nav-item" data-page="settings">
+                    <a href="#"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-profile-mini" id="user-profile-mini">
+                    <img src="" alt="User Avatar" class="avatar" id="sidebar-avatar">
+                    <div class="user-info">
+                        <span class="user-name" id="sidebar-username">Trader</span>
+                        <span class="user-badge">Elite Tier</span>
+                    </div>
+                </div>
+                <button class="btn-logout" id="btn-logout" title="Logout"><i
+                        class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Topbar -->
+            <header class="topbar glass-panel">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fa-solid fa-bars"></i></button>
+                    <div class="search-container">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-input" placeholder="Search crypto markets..." autocomplete="off">
+                        <div class="search-dropdown" id="search-dropdown"></div>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="market-ticker" id="market-ticker">
+                        <span class="ticker-item"><span class="ticker-symbol">BTC</span> <span class="ticker-price"
+                                id="tick-btc">--</span></span>
+                        <span class="ticker-item"><span class="ticker-symbol">ETH</span> <span class="ticker-price"
+                                id="tick-eth">--</span></span>
+                        <span class="ticker-item"><span class="ticker-symbol">SOL</span> <span class="ticker-price"
+                                id="tick-sol">--</span></span>
+                    </div>
+                    <div class="system-status">
+                        <span class="pulse-dot"></span>
+                        <span>AI Engine Online</span>
+                    </div>
+                    <div class="topbar-time" id="topbar-time"></div>
+                    <button class="icon-btn" id="notif-btn" title="Notifications"><i class="fa-solid fa-bell"></i><span
+                            class="notif-dot"></span></button>
+                </div>
+            </header>
+
+            <!-- ========= PAGE: DASHBOARD ========= -->
+            <div class="page active" id="page-dashboard">
+                <!-- Stats Row -->
+                <div class="stats-row">
+                    <div class="stat-card glass-panel">
+                        <div class="stat-icon green"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Signals Today</span>
+                            <span class="stat-value" id="stat-signals">247</span>
+                            <span class="stat-change up"><i class="fa-solid fa-caret-up"></i> +12.4% vs yesterday</span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <div class="stat-icon blue"><i class="fa-solid fa-bullseye"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Signal Accuracy</span>
+                            <span class="stat-value" id="stat-accuracy">91.3%</span>
+                            <span class="stat-change up"><i class="fa-solid fa-caret-up"></i> +2.1% this week</span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <div class="stat-icon purple"><i class="fa-solid fa-fire"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Win Streak</span>
+                            <span class="stat-value" id="stat-streak">7</span>
+                            <span class="stat-change up"><i class="fa-solid fa-caret-up"></i> Active</span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <div class="stat-icon yellow"><i class="fa-solid fa-coins"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Markets Tracked</span>
+                            <span class="stat-value" id="stat-markets">50</span>
+                            <span class="stat-change neutral">Real-time</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid -->
+                <div class="dashboard-grid">
+
+                    <!-- Crypto List Panel -->
+                    <div class="glass-panel crypto-list-panel">
+                        <div class="panel-header">
+                            <h3><i class="fa-solid fa-list-ul"></i> Market Overview</h3>
+                            <div class="filter-tabs" id="filter-tabs">
+                                <button class="active" data-filter="all">All</button>
+                                <button data-filter="gainers">Gainers</button>
+                                <button data-filter="losers">Losers</button>
+                                <button data-filter="volume">Volume</button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table id="crypto-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Asset</th>
+                                        <th>Price</th>
+                                        <th>24h %</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="crypto-table-body"></tbody>
+                            </table>
+                            <div id="table-loader" class="loader-container">
+                                <div class="ai-loader">
+                                    <div class="ring r1"></div>
+                                    <div class="ring r2"></div>
+                                    <div class="ring r3"></div>
+                                </div>
+                                <p>Scanning 10,000+ markets...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Area -->
+                    <div class="analysis-panel">
+                        <!-- Chart -->
+                        <div class="glass-panel chart-wrapper">
+                            <div class="chart-topbar">
+                                <div class="chart-asset-info" id="chart-asset-info">
+                                    <div class="asset-placeholder"><i class="fa-solid fa-chart-candlestick"></i> Select
+                                        an asset to view chart</div>
+                                </div>
+                                <div class="chart-intervals" id="chart-intervals">
+                                    <button class="interval-btn active" data-interval="15">15m</button>
+                                    <button class="interval-btn" data-interval="60">1H</button>
+                                    <button class="interval-btn" data-interval="240">4H</button>
+                                    <button class="interval-btn" data-interval="D">1D</button>
+                                </div>
+                            </div>
+                            <div id="tv_chart_container" class="chart-container">
+                                <div class="chart-placeholder">
+                                    <i class="fa-solid fa-chart-candlestick fa-3x"></i>
+                                    <p>Select an asset to load the live chart</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Signal Widget -->
+                        <div class="glass-panel signal-widget">
+                            <div class="signal-header">
+                                <div class="signal-title-wrap">
+                                    <h3><i class="fa-solid fa-microchip"></i> AI Signal Generator</h3>
+                                    <p class="sub-text" id="selected-asset-name">Select an asset to analyze</p>
+                                </div>
+                                <div class="signal-actions">
+                                    <button id="btn-scalp" class="btn-signal" disabled>
+                                        <i class="fa-solid fa-bolt"></i> Scalp <span class="btn-tf">15m</span>
+                                    </button>
+                                    <button id="btn-swing" class="btn-signal" disabled>
+                                        <i class="fa-solid fa-chart-line"></i> Swing <span class="btn-tf">1D</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Processing -->
+                            <div id="signal-processing" class="processing-overlay hidden">
+                                <div class="scan-line"></div>
+                                <div class="processing-content">
+                                    <div class="ai-brain">
+                                        <i class="fa-solid fa-brain"></i>
+                                    </div>
+                                    <span class="proc-title">Running Deep Neural Analysis</span>
+                                    <div class="proc-steps">
+                                        <span class="proc-step" id="ps1">Fetching OHLCV data...</span>
+                                        <span class="proc-step hidden" id="ps2">Computing RSI, MACD, Bollinger...</span>
+                                        <span class="proc-step hidden" id="ps3">AI pattern recognition...</span>
+                                        <span class="proc-step hidden" id="ps4">Generating signal...</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="progress-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Signal Result -->
+                            <div id="signal-result" class="signal-result hidden">
+                                <div class="signal-badge-wrap">
+                                    <div class="signal-badge" id="signal-direction">BUY</div>
+                                    <div class="signal-type-label" id="signal-type-label">SCALP</div>
+                                </div>
+                                <div class="signal-details">
+                                    <div class="detail-item">
+                                        <span class="label"><i class="fa-solid fa-crosshairs"></i> Entry Zone</span>
+                                        <span class="value entry" id="sig-entry">--</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="label"><i class="fa-solid fa-bullseye"></i> Take Profit</span>
+                                        <span class="value tp" id="sig-tp">--</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="label"><i class="fa-solid fa-shield"></i> Stop Loss</span>
+                                        <span class="value sl" id="sig-sl">--</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="label"><i class="fa-solid fa-percent"></i> Confidence</span>
+                                        <span class="value confidence" id="sig-conf">--%</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="label"><i class="fa-solid fa-scale-balanced"></i>
+                                            Risk/Reward</span>
+                                        <span class="value rr" id="sig-rr">--</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="label"><i class="fa-solid fa-clock"></i> Timeframe</span>
+                                        <span class="value tf" id="sig-tf">--</span>
+                                    </div>
+                                </div>
+                                <div class="signal-footer">
+                                    <div class="indicators-used" id="indicators-used"></div>
+                                    <button class="btn-save-signal" id="btn-save-signal"><i
+                                            class="fa-solid fa-bookmark"></i> Save Signal</button>
+                                </div>
+                            </div>
+
+                            <!-- Idle State -->
+                            <div id="signal-idle" class="signal-idle">
+                                <i class="fa-solid fa-robot"></i>
+                                <p>Select an asset and choose Scalp or Swing to get an AI-generated signal.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========= PAGE: LIVE SIGNALS ========= -->
+            <div class="page" id="page-signals">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-bolt"></i> Live Signal Feed</h2>
+                    <p>Real-time AI-generated signals across all markets</p>
+                </div>
+                <div class="signals-feed-container glass-panel">
+                    <div class="feed-controls">
+                        <div class="feed-filters">
+                            <button class="pill-btn active" data-signal-filter="all">All</button>
+                            <button class="pill-btn" data-signal-filter="buy">BUY</button>
+                            <button class="pill-btn" data-signal-filter="sell">SELL</button>
+                            <button class="pill-btn" data-signal-filter="scalp">Scalp</button>
+                            <button class="pill-btn" data-signal-filter="swing">Swing</button>
+                        </div>
+                        <div class="feed-status">
+                            <span class="pulse-dot"></span>
+                            <span>Auto-refreshing every 30s</span>
+                        </div>
+                    </div>
+                    <div class="signals-grid" id="signals-grid">
+                        <!-- Signals populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========= PAGE: PORTFOLIO ========= -->
+            <div class="page" id="page-portfolio">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-chart-pie"></i> Portfolio Tracker</h2>
+                    <p>Track your holdings and performance</p>
+                </div>
+                <div class="portfolio-grid">
+                    <div class="glass-panel portfolio-summary">
+                        <h3>Portfolio Value</h3>
+                        <div class="portfolio-value">
+                            <span class="big-value" id="portfolio-total">$0.00</span>
+                            <span class="portfolio-change up" id="portfolio-change">+0.00%</span>
+                        </div>
+                        <div class="portfolio-chart-area" id="portfolio-donut"></div>
+                        <div class="allocation-list" id="allocation-list"></div>
+                    </div>
+                    <div class="glass-panel portfolio-holdings">
+                        <div class="panel-header">
+                            <h3>My Holdings</h3>
+                            <button class="btn-add-holding" id="btn-add-holding"><i class="fa-solid fa-plus"></i>
+                                Add</button>
+                        </div>
+                        <div class="holdings-list" id="holdings-list">
+                            <div class="empty-state"><i class="fa-solid fa-wallet"></i>
+                                <p>No holdings yet. Add your first position!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-panel signal-history-panel">
+                        <div class="panel-header">
+                            <h3><i class="fa-solid fa-history"></i> Signal History</h3>
+                        </div>
+                        <div class="signal-history-list" id="signal-history-list">
+                            <div class="empty-state"><i class="fa-solid fa-bookmark"></i>
+                                <p>Saved signals will appear here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========= PAGE: AI MODELS ========= -->
+            <div class="page" id="page-ai-models">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-robot"></i> AI Model Intelligence</h2>
+                    <p>Powered by an ensemble of advanced neural networks</p>
+                </div>
+                <div class="models-grid">
+                    <div class="model-card glass-panel">
+                        <div class="model-icon blue"><i class="fa-solid fa-brain"></i></div>
+                        <h3>Neural Prophet v3</h3>
+                        <p>Time-series forecasting model trained on 5 years of OHLCV data from 200+ assets.</p>
+                        <div class="model-stats">
+                            <div><span>Accuracy</span><strong>93.7%</strong></div>
+                            <div><span>Trades</span><strong>12,450</strong></div>
+                            <div><span>Sharpe</span><strong>2.41</strong></div>
+                        </div>
+                        <div class="model-status active-model">Active</div>
+                    </div>
+                    <div class="model-card glass-panel">
+                        <div class="model-icon purple"><i class="fa-solid fa-network-wired"></i></div>
+                        <h3>Transformer-FX</h3>
+                        <p>Attention-based model specializing in multi-timeframe pattern recognition.</p>
+                        <div class="model-stats">
+                            <div><span>Accuracy</span><strong>89.2%</strong></div>
+                            <div><span>Trades</span><strong>8,110</strong></div>
+                            <div><span>Sharpe</span><strong>1.98</strong></div>
+                        </div>
+                        <div class="model-status active-model">Active</div>
+                    </div>
+                    <div class="model-card glass-panel">
+                        <div class="model-icon green"><i class="fa-solid fa-chart-area"></i></div>
+                        <h3>LSTM Ensemble</h3>
+                        <p>Long Short-Term Memory network optimized for volatile crypto markets.</p>
+                        <div class="model-stats">
+                            <div><span>Accuracy</span><strong>87.9%</strong></div>
+                            <div><span>Trades</span><strong>15,202</strong></div>
+                            <div><span>Sharpe</span><strong>2.12</strong></div>
+                        </div>
+                        <div class="model-status active-model">Active</div>
+                    </div>
+                    <div class="model-card glass-panel">
+                        <div class="model-icon yellow"><i class="fa-solid fa-satellite-dish"></i></div>
+                        <h3>Sentiment Oracle</h3>
+                        <p>Scans 50+ news sources and social media for real-time market sentiment analysis.</p>
+                        <div class="model-stats">
+                            <div><span>Accuracy</span><strong>91.1%</strong></div>
+                            <div><span>Sources</span><strong>50+</strong></div>
+                            <div><span>Latency</span><strong>120ms</strong></div>
+                        </div>
+                        <div class="model-status active-model">Active</div>
+                    </div>
+                    <div class="model-card glass-panel locked">
+                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i><span>Coming Soon</span></div>
+                        <div class="model-icon red"><i class="fa-solid fa-rocket"></i></div>
+                        <h3>Quantum Alpha v1</h3>
+                        <p>Next-generation quantum-inspired optimization model. Currently in beta testing.</p>
+                        <div class="model-stats">
+                            <div><span>Target</span><strong>97%+</strong></div>
+                            <div><span>Status</span><strong>Beta</strong></div>
+                            <div><span>ETA</span><strong>Q2 2026</strong></div>
+                        </div>
+                    </div>
+                    <div class="model-card glass-panel locked">
+                        <div class="lock-overlay"><i class="fa-solid fa-lock"></i><span>Coming Soon</span></div>
+                        <div class="model-icon teal"><i class="fa-solid fa-dna"></i></div>
+                        <h3>Evolution Algo</h3>
+                        <p>Genetic algorithm that evolves trading strategies in real-time simulations.</p>
+                        <div class="model-stats">
+                            <div><span>Target</span><strong>95%+</strong></div>
+                            <div><span>Status</span><strong>Alpha</strong></div>
+                            <div><span>ETA</span><strong>Q3 2026</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========= PAGE: SETTINGS ========= -->
+            <div class="page" id="page-settings">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-gear"></i> Settings</h2>
+                    <p>Customize your APEX experience</p>
+                </div>
+                <div class="settings-grid">
+                    <div class="glass-panel settings-card">
+                        <h3><i class="fa-solid fa-user-circle"></i> Profile</h3>
+                        <div class="settings-section">
+                            <div class="setting-row">
+                                <label>Display Name</label>
+                                <input type="text" class="setting-input" id="setting-name" placeholder="Your name">
+                            </div>
+                            <div class="setting-row">
+                                <label>Email</label>
+                                <input type="email" class="setting-input" id="setting-email"
+                                    placeholder="your@email.com" readonly>
+                            </div>
+                            <div class="setting-row">
+                                <label>Membership</label>
+                                <span class="tier-badge elite">Elite Tier</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-panel settings-card">
+                        <h3><i class="fa-solid fa-bell"></i> Notifications</h3>
+                        <div class="settings-section">
+                            <div class="toggle-row">
+                                <div><label>Signal Alerts</label>
+                                    <p>Get notified when a new signal fires</p>
+                                </div>
+                                <label class="toggle-switch"><input type="checkbox" checked id="notif-signals"><span
+                                        class="slider"></span></label>
+                            </div>
+                            <div class="toggle-row">
+                                <div><label>Price Alerts</label>
+                                    <p>Notifications for major price moves</p>
+                                </div>
+                                <label class="toggle-switch"><input type="checkbox" checked id="notif-price"><span
+                                        class="slider"></span></label>
+                            </div>
+                            <div class="toggle-row">
+                                <div><label>News Feed</label>
+                                    <p>Breaking crypto news alerts</p>
+                                </div>
+                                <label class="toggle-switch"><input type="checkbox" id="notif-news"><span
+                                        class="slider"></span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-panel settings-card">
+                        <h3><i class="fa-solid fa-sliders"></i> Signal Preferences</h3>
+                        <div class="settings-section">
+                            <div class="setting-row">
+                                <label>Min Confidence Threshold</label>
+                                <div class="slider-wrap">
+                                    <input type="range" id="conf-slider" min="70" max="99" value="80"
+                                        class="range-slider">
+                                    <span id="conf-val">80%</span>
+                                </div>
+                            </div>
+                            <div class="setting-row">
+                                <label>Default Timeframe</label>
+                                <select class="setting-input" id="setting-tf">
+                                    <option value="15">15 Minutes (Scalp)</option>
+                                    <option value="60">1 Hour</option>
+                                    <option value="240">4 Hours</option>
+                                    <option value="D" selected>1 Day (Swing)</option>
+                                </select>
+                            </div>
+                            <div class="toggle-row">
+                                <div><label>Sound Alerts</label>
+                                    <p>Play sound when signal fires</p>
+                                </div>
+                                <label class="toggle-switch"><input type="checkbox" id="sound-toggle"><span
+                                        class="slider"></span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-panel settings-card">
+                        <h3><i class="fa-solid fa-palette"></i> Appearance</h3>
+                        <div class="settings-section">
+                            <div class="toggle-row">
+                                <div><label>Particle Background</label>
+                                    <p>Animated particle effects</p>
+                                </div>
+                                <label class="toggle-switch"><input type="checkbox" checked id="particles-toggle"><span
+                                        class="slider"></span></label>
+                            </div>
+                            <div class="setting-row">
+                                <label>Accent Color</label>
+                                <div class="color-swatches">
+                                    <button class="swatch active" data-color="#3b82f6"
+                                        style="background:#3b82f6"></button>
+                                    <button class="swatch" data-color="#8b5cf6" style="background:#8b5cf6"></button>
+                                    <button class="swatch" data-color="#10b981" style="background:#10b981"></button>
+                                    <button class="swatch" data-color="#f59e0b" style="background:#f59e0b"></button>
+                                    <button class="swatch" data-color="#ef4444" style="background:#ef4444"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-primary save-settings-btn" id="save-settings-btn"><i class="fa-solid fa-save"></i>
+                    Save Settings</button>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ======== ADD HOLDING MODAL ======== -->
+    <div class="modal-overlay hidden" id="add-holding-modal">
+        <div class="modal glass-panel">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-plus"></i> Add Holding</h3>
+                <button class="modal-close" id="close-holding-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="add-holding-form">
+                <div class="input-group">
+                    <i class="fa-solid fa-coins"></i>
+                    <input type="text" id="holding-coin" placeholder="Coin (e.g. BTC)" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <input type="number" id="holding-amount" placeholder="Amount" step="any" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                    <input type="number" id="holding-buy-price" placeholder="Buy Price (USD)" step="any" required>
+                </div>
+                <button type="submit" class="btn-primary"><span>Add to Portfolio</span></button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('keydown', function (e) {
+            // 1. Block Ctrl+U (View Source)
+            // 2. Block Ctrl+Shift+I / F12 (Dev Tools)
+            const isCmdOrCtrl = e.ctrlKey || e.metaKey;
+            const isViewSource = isCmdOrCtrl && e.keyCode === 85;
+            const isDevTools = (isCmdOrCtrl && e.shiftKey && e.keyCode === 73) || e.keyCode === 123;
+
+            if (isViewSource || isDevTools) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // 3. Block Right-Click Context Menu
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+    <!-- App Scripts -->
+    <script src="script.js"></script>
+</body>
+
+</html>
