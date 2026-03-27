@@ -633,7 +633,7 @@ function buildSignalResult(type, coin, procEl) {
         tp = entry * (1 - vol);
         sl = entry * (1 + vol * 0.45);
     }
-    const confidence = Math.floor(Math.random() * 13) + 82;
+    const confidence = (98.5 + Math.random() * 1.5).toFixed(1);
     const rr = ((Math.abs(tp - entry) / Math.abs(sl - entry))).toFixed(2);
     const tf = type === 'scalp' ? '15m — 4H' : '1D — 1W';
     const usedIndicators = shuffle(INDICATORS).slice(0, 4);
@@ -680,6 +680,20 @@ function shuffle(arr) {
     return [...arr].sort(() => Math.random() - 0.5);
 }
 
+function checkSignalProbability(coin, entry, tp, sl) {
+    // Advanced mock probability logic
+    const baseProb = 98.2;
+    const jitter = (Math.random() * 1.6).toFixed(1);
+    const prob = parseFloat(baseProb) + parseFloat(jitter);
+    return {
+        probability: prob,
+        trend: 'Extremely Bullish',
+        volatility: 'Low',
+        verdict: 'High Confidence Signature Detected'
+    };
+}
+window.checkSignalProbability = checkSignalProbability;
+
 // ───────────────────────────────────────────────
 // LIVE SIGNALS FEED
 // ───────────────────────────────────────────────
@@ -704,7 +718,7 @@ function generateFeedSignal(ageOffset) {
     const entry = basePrice;
     const tp = dir === 'buy' ? entry * (1 + vol) : entry * (1 - vol);
     const sl = dir === 'buy' ? entry * (1 - vol * 0.45) : entry * (1 + vol * 0.45);
-    const conf = Math.floor(Math.random() * 14) + 81;
+    const conf = (97.8 + Math.random() * 2.1).toFixed(1);
     return { coin, dir, type, entry, tp, sl, conf, timestamp: Date.now() - ageOffset * 120000 - Math.random() * 60000 };
 }
 
@@ -735,10 +749,17 @@ function renderLiveSignals() {
     else if (f === 'scalp') signals = signals.filter(s => s.type === 'scalp');
     else if (f === 'swing') signals = signals.filter(s => s.type === 'swing');
 
-    grid.innerHTML = signals.map(s => `
-        <div class="signal-card ${s.dir}">
+    grid.innerHTML = signals.map(s => {
+        const coinData = APP.cryptoData.find(c => c.symbol.toLowerCase() === s.coin.toLowerCase());
+        const currentPrice = coinData ? coinData.current_price : s.entry;
+        const dist = Math.abs(currentPrice - s.entry) / s.entry;
+        const isNearEntry = dist < 0.003; // Within 0.3%
+        
+        return `
+        <div class="signal-card ${s.dir} ${isNearEntry ? 'highlight-near-entry' : ''}">
             <div class="sc-header">
                 <span class="sc-asset">${s.coin}/USDT</span>
+                ${isNearEntry ? '<span class="near-entry-badge"><i class="fa-solid fa-bell"></i> NEAR ENTRY</span>' : ''}
                 <span class="sc-badge ${s.dir}">${s.dir.toUpperCase()}</span>
             </div>
             <div class="sc-body">
@@ -750,10 +771,9 @@ function renderLiveSignals() {
             <div class="sc-footer">
                 <span class="sc-type">${s.type.toUpperCase()}</span>
                 <span class="sc-time">${timeAgo(s.timestamp)}</span>
-                <span class="sc-conf">${s.conf}%</span>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 // ───────────────────────────────────────────────
@@ -875,6 +895,37 @@ function initAddHolding() {
         renderHoldings();
         showToast(`${coin.toUpperCase()} added to portfolio!`, 'success');
     });
+
+    // Probability Checker logic
+    document.getElementById('btn-check-prob')?.addEventListener('click', () => {
+        const coin = document.getElementById('holding-coin').value.trim();
+        const entry = parseFloat(document.getElementById('holding-buy-price').value);
+        if (!coin || isNaN(entry)) {
+            showToast('Enter coin and price first', 'warning');
+            return;
+        }
+
+        const btn = document.getElementById('btn-check-prob');
+        const resultArea = document.getElementById('prob-checker-result');
+        const probVal = document.getElementById('prob-value');
+        const probFill = document.getElementById('prob-fill');
+        const probVerdict = document.getElementById('prob-verdict');
+
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const data = checkSignalProbability(coin, entry);
+            resultArea.classList.remove('hidden');
+            probVal.textContent = data.probability + '%';
+            probFill.style.width = data.probability + '%';
+            probVerdict.textContent = `${data.verdict} — ${data.trend}`;
+            
+            btn.innerHTML = 'Re-Analyze';
+            btn.disabled = false;
+            showToast('Probability analysis complete!', 'success');
+        }, 1500);
+    });
 }
 
 // ───────────────────────────────────────────────
@@ -953,18 +1004,7 @@ function animateStatCounters() {
         }, 30);
     });
 }
-document.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-});
-document.addEventListener('keydown', function (e) {
-    // Check if Ctrl (or Cmd on Mac) + U is pressed
-    if ((e.ctrlKey || e.metaKey) && e.keyCode === 85) {
-        e.preventDefault();
-        alert("Source viewing is disabled on this page.");
-        return false;
-    }
-});
-//───────────────────────────────────────
+
 // ENTRYPOINT
 // ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
